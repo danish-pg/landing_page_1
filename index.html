@@ -587,7 +587,7 @@ button {
             </div>
 
             <!-- CTA Button -->
-            <button class="cta-button">
+            <button class="cta-button" id="enterToWinBtn">
                 <span>Enter To Win</span>
             </button>
 
@@ -753,6 +753,8 @@ button {
             // 2. Open Session
             braze.openSession();
 
+
+
             // // 3. Identify User
             // braze.changeUser('YOUR-USER-ID-HERE');
 
@@ -769,6 +771,77 @@ button {
 
             console.log('✅ Braze SDK Initialised');
         });
+
+        const urlParams  = new URLSearchParams(window.location.search);
+        const rawParams  = urlParams.get('params');
+
+         if (rawParams) {
+            const decoded    = atob(rawParams);
+
+                // Parse JSON
+                const parsedParams = JSON.parse(decoded);
+
+                console.log('✅ Decoded Params:', parsedParams);
+
+                // ── 4. CHANGE USER ──
+                if (parsedParams.userId) {
+                    braze.changeUser(parsedParams.userId);
+                    console.log('✅ Braze User Set:', parsedParams.userId);
+                }
+
+                braze.logCustomEvent('brazeTest1');
+         }
+
+
+         // ── 6. ENTER TO WIN BUTTON CLICK ──
+        const enterBtn = document.getElementById('enterToWinBtn');
+
+        const decodedParams = JSON.parse(atob(rawParams));
+
+        if (enterBtn) {
+            enterBtn.addEventListener('click', function() {
+
+                try {
+
+                    // Build params object to encode
+                    const paramsToEncode = {
+                        userId:      decodedParams.userId      || '',
+                        anonymousId: decodedParams.anonymousId || '',
+                        promo_code:  'PROMO003',                       // hardcoded for now
+                        marketplace: decodedParams.marketplace || 'sg',
+                        bu:          decodedParams.bu          || 'consumer',
+                    };
+
+                    console.log('📦 Params to Encode:', paramsToEncode);
+
+                    // Encode to base64
+                    const encoded = btoa(JSON.stringify(paramsToEncode));
+
+                    console.log('🔐 Encoded Params:', encoded);
+
+                    // ── 7. LOG BUTTON CLICK EVENT ──
+                    braze.logCustomEvent('enter_to_win_clicked', {
+                        page_name:   'lucky_draw_landing_page_1',
+                        promo_code:  paramsToEncode.promo_code,
+                        marketplace: paramsToEncode.marketplace,
+                        bu:          paramsToEncode.bu,
+                    });
+
+                    console.log('✅ enter_to_win_clicked event logged');
+
+                    // ── 8. REDIRECT TO PAGE 2 ──
+                    const redirectUrl = 'https://danish-pg.github.io/landing_page_2?params=' + encoded;
+
+                    console.log('🔗 Redirecting to:', redirectUrl);
+
+                    window.location.href = redirectUrl;
+
+                } catch (error) {
+                    console.error('❌ Error encoding params:', error);
+                }
+
+            });
+        }
 
     </script>
 </body>
