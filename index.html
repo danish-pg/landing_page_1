@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PropertyGuru - Win $12,000</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://js.appboycdn.com/web-sdk/6.2/braze.min.js"></script>
     <style>
         /* ─────────────────────────────────────────
    CSS CUSTOM PROPERTIES (Design Tokens)
@@ -736,5 +737,39 @@ button {
         <!-- END CONTENT -->
 
     </div>
+
+     <script type="text/javascript">
+
+        window.addEventListener('load', function() {
+
+            // 1. Initialise
+            braze.initialize('d5300222-4d6c-488d-97ab-93bc99c0e02e', {
+                baseUrl:                     'sdk.iad-03.braze.com',
+                enableLogging:               true,
+                allowUserSuppliedJavascript: true,
+                sessionTimeoutInSeconds:     30,
+            });
+
+            // 2. Open Session
+            braze.openSession();
+
+            // // 3. Identify User
+            // braze.changeUser('YOUR-USER-ID-HERE');
+
+            // // 4. Log Page View Event
+            // braze.logCustomEvent('page_viewed', {
+            //     page_name:     'lucky_draw_landing',
+            //     campaign_name: 'biggest_asset_2026'
+            // });
+
+            // 5. Show In-App Messages
+            braze.subscribeToInAppMessage(function(inAppMessage) {
+                braze.showInAppMessage(inAppMessage);
+            });
+
+            console.log('✅ Braze SDK Initialised');
+        });
+
+    </script>
 </body>
 </html>
