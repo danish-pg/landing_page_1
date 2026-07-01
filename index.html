@@ -740,74 +740,76 @@ button {
 
      <script type="text/javascript">
 
-        window.addEventListener('load', function() {
+    window.addEventListener('load', function() {
 
-            // 1. Initialise
-            braze.initialize('d5300222-4d6c-488d-97ab-93bc99c0e02e', {
-                baseUrl:                     'sdk.iad-03.braze.com',
-                enableLogging:               true,
-                allowUserSuppliedJavascript: true,
-                sessionTimeoutInSeconds:     30,
-            });
-
-            // 2. Open Session
-            braze.openSession();
-
-
-
-            // // 3. Identify User
-            // braze.changeUser('YOUR-USER-ID-HERE');
-
-            // // 4. Log Page View Event
-            // braze.logCustomEvent('page_viewed', {
-            //     page_name:     'lucky_draw_landing',
-            //     campaign_name: 'biggest_asset_2026'
-            // });
-
-            // 5. Show In-App Messages
-            braze.subscribeToInAppMessage(function(inAppMessage) {
-                braze.showInAppMessage(inAppMessage);
-            });
-
-            console.log('✅ Braze SDK Initialised');
+        // ── 1. INITIALISE BRAZE FIRST ──
+        braze.initialize('d5300222-4d6c-488d-97ab-93bc99c0e02e', {
+            baseUrl:                     'sdk.iad-03.braze.com',
+            enableLogging:               true,
+            allowUserSuppliedJavascript: true,
+            sessionTimeoutInSeconds:     30,
         });
 
-        const urlParams  = new URLSearchParams(window.location.search);
-        const rawParams  = urlParams.get('params');
+        // ── 2. OPEN SESSION ──
+        braze.openSession();
 
-         if (rawParams) {
-            const decoded    = atob(rawParams);
+        // ── 3. SUBSCRIBE TO IN-APP MESSAGES ──
+        braze.subscribeToInAppMessage(function(inAppMessage) {
+            braze.showInAppMessage(inAppMessage);
+        });
 
-                // Parse JSON
-                const parsedParams = JSON.parse(decoded);
+        console.log('✅ Braze SDK Initialised');
 
-                console.log('✅ Decoded Params:', parsedParams);
+        // ── 4. DECODE URL PARAMS ──
+        let decodedParams = {};
 
-                // ── 4. CHANGE USER ──
-                if (parsedParams.userId) {
-                    braze.changeUser(parsedParams.userId);
-                    console.log('✅ Braze User Set:', parsedParams.userId);
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawParams = urlParams.get('params');
+
+            if (rawParams) {
+
+                decodedParams = JSON.parse(atob(rawParams));
+                console.log('✅ Decoded Params:', decodedParams);
+
+                // ── 5. CHANGE USER ──
+                // Now braze is ready ✅
+                if (decodedParams.userId) {
+                    braze.changeUser(decodedParams.userId);
+                    console.log('✅ Braze User Set:', decodedParams.userId);
                 }
 
-                braze.logCustomEvent('brazeTest1');
-         }
+                // ── 6. LOG CUSTOM EVENT ──
+                // Now braze is ready ✅
+                braze.logCustomEvent('brazeTest1', {
+                    page_name:   'lucky_draw_landing_page_1',
+                    marketplace: decodedParams.marketplace || '',
+                    bu:          decodedParams.bu          || '',
+                });
 
+                console.log('✅ brazeTest1 event logged');
 
-         // ── 6. ENTER TO WIN BUTTON CLICK ──
+            } else {
+                console.warn('⚠️ No params found in URL');
+            }
+
+        } catch (error) {
+            console.error('❌ Error decoding params:', error);
+        }
+
+        // ── 7. ENTER TO WIN BUTTON ──
         const enterBtn = document.getElementById('enterToWinBtn');
-
-        const decodedParams = JSON.parse(atob(rawParams));
 
         if (enterBtn) {
             enterBtn.addEventListener('click', function() {
 
                 try {
 
-                    // Build params object to encode
+                    // Build params to send to page 2
                     const paramsToEncode = {
                         userId:      decodedParams.userId      || '',
                         anonymousId: decodedParams.anonymousId || '',
-                        promo_code:  'PROMO003',                       // hardcoded for now
+                        promo_code:  'PROMO003',
                         marketplace: decodedParams.marketplace || 'sg',
                         bu:          decodedParams.bu          || 'consumer',
                     };
@@ -819,7 +821,7 @@ button {
 
                     console.log('🔐 Encoded Params:', encoded);
 
-                    // ── 7. LOG BUTTON CLICK EVENT ──
+                    // Log button click event
                     braze.logCustomEvent('enter_to_win_clicked', {
                         page_name:   'lucky_draw_landing_page_1',
                         promo_code:  paramsToEncode.promo_code,
@@ -829,20 +831,24 @@ button {
 
                     console.log('✅ enter_to_win_clicked event logged');
 
-                    // ── 8. REDIRECT TO PAGE 2 ──
-                    const redirectUrl = 'https://danish-pg.github.io/landing_page_2/index.html?params=' + encoded;
+                    // Redirect to page 2
+                    const redirectUrl =
+                        'https://danish-pg.github.io/landing_page_2/index.html?params='
+                        + encoded;
 
                     console.log('🔗 Redirecting to:', redirectUrl);
 
                     window.location.href = redirectUrl;
 
                 } catch (error) {
-                    console.error('❌ Error encoding params:', error);
+                    console.error('❌ Error on button click:', error);
                 }
 
             });
         }
 
-    </script>
+    }); // ── END load event ──
+
+</script>
 </body>
 </html>
