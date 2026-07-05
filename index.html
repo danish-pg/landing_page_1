@@ -743,59 +743,59 @@ button {
     window.addEventListener('load', function() {
 
         // ── 1. INITIALISE BRAZE FIRST ──
-        braze.initialize('d5300222-4d6c-488d-97ab-93bc99c0e02e', {
-            baseUrl:                     'sdk.iad-03.braze.com',
-            enableLogging:               true,
-            allowUserSuppliedJavascript: true,
-            sessionTimeoutInSeconds:     30,
-        });
+        // braze.initialize('d5300222-4d6c-488d-97ab-93bc99c0e02e', {
+        //     baseUrl:                     'sdk.iad-03.braze.com',
+        //     enableLogging:               true,
+        //     allowUserSuppliedJavascript: true,
+        //     sessionTimeoutInSeconds:     30,
+        // });
 
-        // ── 2. OPEN SESSION ──
-        braze.openSession();
+        // // ── 2. OPEN SESSION ──
+        // braze.openSession();
 
-        // ── 3. SUBSCRIBE TO IN-APP MESSAGES ──
-        braze.subscribeToInAppMessage(function(inAppMessage) {
-            braze.showInAppMessage(inAppMessage);
-        });
+        // // ── 3. SUBSCRIBE TO IN-APP MESSAGES ──
+        // braze.subscribeToInAppMessage(function(inAppMessage) {
+        //     braze.showInAppMessage(inAppMessage);
+        // });
 
-        console.log('✅ Braze SDK Initialised');
+        // console.log('✅ Braze SDK Initialised');
 
         // ── 4. DECODE URL PARAMS ──
-        let decodedParams = {};
+        // let decodedParams = {};
 
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rawParams = urlParams.get('params');
+        // try {
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     const rawParams = urlParams.get('params');
 
-            if (rawParams) {
+        //     if (rawParams) {
 
-                decodedParams = JSON.parse(atob(rawParams));
-                console.log('✅ Decoded Params:', decodedParams);
+        //         decodedParams = JSON.parse(atob(rawParams));
+        //         console.log('✅ Decoded Params:', decodedParams);
 
-                // ── 5. CHANGE USER ──
-                // Now braze is ready ✅
-                if (decodedParams.userId) {
-                    braze.changeUser(decodedParams.userId);
-                    console.log('✅ Braze User Set:', decodedParams.userId);
-                }
+        //         // ── 5. CHANGE USER ──
+        //         // Now braze is ready ✅
+        //         if (decodedParams.userId) {
+        //             braze.changeUser(decodedParams.userId);
+        //             console.log('✅ Braze User Set:', decodedParams.userId);
+        //         }
 
-                // ── 6. LOG CUSTOM EVENT ──
-                // Now braze is ready ✅
-                braze.logCustomEvent('brazeTest1', {
-                    page_name:   'lucky_draw_landing_page_1',
-                    marketplace: decodedParams.marketplace || '',
-                    bu:          decodedParams.bu          || '',
-                });
+        //         // ── 6. LOG CUSTOM EVENT ──
+        //         // Now braze is ready ✅
+        //         braze.logCustomEvent('brazeTest1', {
+        //             page_name:   'lucky_draw_landing_page_1',
+        //             marketplace: decodedParams.marketplace || '',
+        //             bu:          decodedParams.bu          || '',
+        //         });
 
-                console.log('✅ brazeTest1 event logged');
+        //         console.log('✅ brazeTest1 event logged');
 
-            } else {
-                console.warn('⚠️ No params found in URL');
-            }
+        //     } else {
+        //         console.warn('⚠️ No params found in URL');
+        //     }
 
-        } catch (error) {
-            console.error('❌ Error decoding params:', error);
-        }
+        // } catch (error) {
+        //     console.error('❌ Error decoding params:', error);
+        // }
 
         // ── 7. ENTER TO WIN BUTTON ──
         const enterBtn = document.getElementById('enterToWinBtn');
@@ -805,31 +805,31 @@ button {
 
                 try {
 
-                    // Build params to send to page 2
-                    const paramsToEncode = {
-                        userId:      decodedParams.userId      || '',
-                        anonymousId: decodedParams.anonymousId || '',
-                        promo_code:  'PROMO003',
-                        marketplace: decodedParams.marketplace || 'sg',
-                        bu:          decodedParams.bu          || 'consumer',
-                    };
+                    // // Build params to send to page 2
+                    // const paramsToEncode = {
+                    //     userId:      decodedParams.userId      || '',
+                    //     anonymousId: decodedParams.anonymousId || '',
+                    //     promo_code:  'PROMO003',
+                    //     marketplace: decodedParams.marketplace || 'sg',
+                    //     bu:          decodedParams.bu          || 'consumer',
+                    // };
 
-                    console.log('📦 Params to Encode:', paramsToEncode);
+                    // console.log('📦 Params to Encode:', paramsToEncode);
 
-                    // Encode to base64
-                    const encoded = btoa(JSON.stringify(paramsToEncode));
+                    // // Encode to base64
+                    // const encoded = btoa(JSON.stringify(paramsToEncode));
 
-                    console.log('🔐 Encoded Params:', encoded);
+                    // console.log('🔐 Encoded Params:', encoded);
 
-                    // Log button click event
-                    braze.logCustomEvent('enter_to_win_clicked', {
-                        page_name:   'lucky_draw_landing_page_1',
-                        promo_code:  paramsToEncode.promo_code,
-                        marketplace: paramsToEncode.marketplace,
-                        bu:          paramsToEncode.bu,
-                    });
+                    // // Log button click event
+                    // braze.logCustomEvent('enter_to_win_clicked', {
+                    //     page_name:   'lucky_draw_landing_page_1',
+                    //     promo_code:  paramsToEncode.promo_code,
+                    //     marketplace: paramsToEncode.marketplace,
+                    //     bu:          paramsToEncode.bu,
+                    // });
 
-                    console.log('✅ enter_to_win_clicked event logged');
+                    // console.log('✅ enter_to_win_clicked event logged');
 
                     // Redirect to page 2
                     // const redirectUrl =
