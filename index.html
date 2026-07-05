@@ -832,13 +832,15 @@ button {
                     console.log('✅ enter_to_win_clicked event logged');
 
                     // Redirect to page 2
+                    // const redirectUrl =
+                    //     'https://danish-pg.github.io/landing_page_2/index.html?params='
+                    //     + encoded;
                     const redirectUrl =
-                        'https://danish-pg.github.io/landing_page_2/index.html?params='
-                        + encoded;
+                        'propertygurusg://https://www.propertyguru.com.sg/home-sellers/dashboard/overview?utm_source=lcm_braze&utm_medium=in_push&utm_campaign=sg_consumers_myproperty_onboarding_iam';
 
                     console.log('🔗 Redirecting to:', redirectUrl);
 
-                    window.location.href = 'propertygurusg://https://www.propertyguru.com.sg/home-sellers/dashboard/overview';
+                    window.location.href = redirectUrl;
 
                 } catch (error) {
                     console.error('❌ Error on button click:', error);
