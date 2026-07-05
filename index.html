@@ -835,12 +835,13 @@ button {
                     // const redirectUrl =
                     //     'https://danish-pg.github.io/landing_page_2/index.html?params='
                     //     + encoded;
-                    
-                    const redirectUrl = 'https://www.integration.propertyguru.com.sg/home-sellers?utm_source=lcm_braze&utm_medium=in_push&utm_campaign=sg_consumers_myproperty_onboarding_iam';
+                    const redirectUrl = 'propertygurusg://https://www.integration.propertyguru.com.sg/home-sellers?utm_source=lcm_braze&utm_medium=in_push&utm_campaign=sg_consumers_myproperty_onboarding_iam';
 
                     console.log('🔗 Redirecting to:', redirectUrl);
 
-                    window.location.href = redirectUrl;
+                    window.open(redirectUrl, '_self');
+                  //  window.location.assign(redirectUrl);
+                  //  window.location.href = redirectUrl;
 
                 } catch (error) {
                     console.error('❌ Error on button click:', error);
