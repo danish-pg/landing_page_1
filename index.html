@@ -777,7 +777,13 @@ button {
 
             if (rawParams) {
 
-                decodedParams = JSON.parse(atob(rawParams));
+                let decodedStr = atob(rawParams);
+                try {
+                    decodedParams = JSON.parse(decodedStr);
+                } catch (e) {
+                    decodedStr = decodeURIComponent(decodedStr);
+                    decodedParams = JSON.parse(decodedStr);
+                }
                 console.log('✅ Decoded Params:', decodedParams);
 
                 // Display decoded parameters as p tags
@@ -819,7 +825,7 @@ button {
                     // ── 6. LOG CUSTOM EVENT ──
                     braze.logCustomEvent('myproperty_entered_lp1', {});
                     console.log('✅ myproperty_entered_lp1 event logged');
-                    
+
                     // Check if user is onboarded
                     const isOnboarded = decodedParams.myproperty_onboarded === true || decodedParams.myproperty_onboarded === 'true';
 
