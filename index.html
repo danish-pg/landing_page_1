@@ -733,6 +733,14 @@ button {
             </div>
             <!-- END T&C -->
 
+            <!-- Decoded Params Display -->
+            <div id="decodedParamsDisplay" class="tnc-section" style="border-top: 1px dashed var(--colour-border-active-quinary); padding-top: 16px; margin-top: 16px;">
+                <div class="tnc-heading">Decoded URL Parameters</div>
+                <div id="paramsList" style="display: flex; flex-direction: column; gap: 4px; word-break: break-all;">
+                    <p class="tnc-text" style="font-style: italic;">No parameters decoded.</p>
+                </div>
+            </div>
+
         </div>
         <!-- END CONTENT -->
 
@@ -772,15 +780,24 @@ button {
                 decodedParams = JSON.parse(atob(rawParams));
                 console.log('✅ Decoded Params:', decodedParams);
 
+                // Display decoded parameters as p tags
+                const paramsListDiv = document.getElementById('paramsList');
+                if (paramsListDiv) {
+                    paramsListDiv.innerHTML = '';
+                    for (const [key, value] of Object.entries(decodedParams)) {
+                        const p = document.createElement('p');
+                        p.className = 'tnc-text';
+                        p.innerHTML = `<strong>${key}:</strong> ${JSON.stringify(value)}`;
+                        paramsListDiv.appendChild(p);
+                    }
+                }
+
                 // ── 5. CHANGE USER ──
                 // Now braze is ready ✅
                 if (decodedParams.userId) {
                     braze.changeUser(decodedParams.userId);
                     console.log('✅ Braze User Set:', decodedParams.userId);
 
-                    // ── 6. LOG CUSTOM EVENT ──
-                    braze.logCustomEvent('myproperty_entered_lp1', {});
-                    console.log('✅ myproperty_entered_lp1 event logged');
                 }
 
             } else {
@@ -799,6 +816,10 @@ button {
 
                 try {
 
+                    // ── 6. LOG CUSTOM EVENT ──
+                    braze.logCustomEvent('myproperty_entered_lp1', {});
+                    console.log('✅ myproperty_entered_lp1 event logged');
+                    
                     // Check if user is onboarded
                     const isOnboarded = decodedParams.myproperty_onboarded === true || decodedParams.myproperty_onboarded === 'true';
 
