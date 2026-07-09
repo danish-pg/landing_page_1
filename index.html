@@ -777,17 +777,11 @@ button {
                 if (decodedParams.userId) {
                     braze.changeUser(decodedParams.userId);
                     console.log('✅ Braze User Set:', decodedParams.userId);
+
+                    // ── 6. LOG CUSTOM EVENT ──
+                    braze.logCustomEvent('myproperty_entered_lp1', {});
+                    console.log('✅ myproperty_entered_lp1 event logged');
                 }
-
-                // ── 6. LOG CUSTOM EVENT ──
-                // Now braze is ready ✅
-                braze.logCustomEvent('brazeTest1', {
-                    page_name:   'lucky_draw_landing_page_1',
-                    marketplace: decodedParams.marketplace || '',
-                    bu:          decodedParams.bu          || '',
-                });
-
-                console.log('✅ brazeTest1 event logged');
 
             } else {
                 console.warn('⚠️ No params found in URL');
@@ -805,43 +799,49 @@ button {
 
                 try {
 
-                    // Build params to send to page 2
-                    const paramsToEncode = {
-                        userId:      decodedParams.userId      || '',
-                        anonymousId: decodedParams.anonymousId || '',
-                        promo_code:  'PROMO003',
-                        marketplace: decodedParams.marketplace || 'sg',
-                        bu:          decodedParams.bu          || 'consumer',
-                    };
+                    // Check if user is onboarded
+                    const isOnboarded = decodedParams.myproperty_onboarded === true || decodedParams.myproperty_onboarded === 'true';
 
-                    console.log('📦 Params to Encode:', paramsToEncode);
+                    if (!isOnboarded) {
+                        const redirectUrl = 'propertygurusg://https://www.propertyguru.com.sg/home-sellers?utm_source=lcm_braze&utm_medium=in_push&utm_campaign=sg_consumers_myproperty_onboarding_iam';
+                        console.log('🔗 Redirecting to (not onboarded):', redirectUrl);
+                        window.open(redirectUrl, '_self');
+                    } else {
+                        // Build params to send to page 2
+                        const paramsToEncode = {
+                            userId:        decodedParams.userId      || '',
+                            anonymousId:   decodedParams.anonymousId || '',
+                            promo_code:    decodedParams.myproperty_ticket_number || '',
+                            permission_on: decodedParams.permission_on || '',
+                            marketplace:   decodedParams.marketplace || 'sg',
+                            bu:            decodedParams.bu          || 'consumer',
+                        };
 
-                    // Encode to base64
-                    const encoded = btoa(JSON.stringify(paramsToEncode));
+                        console.log('📦 Params to Encode:', paramsToEncode);
 
-                    console.log('🔐 Encoded Params:', encoded);
+                        // Encode to base64
+                        const encoded = btoa(JSON.stringify(paramsToEncode));
 
-                    // Log button click event
-                    braze.logCustomEvent('enter_to_win_clicked', {
-                        page_name:   'lucky_draw_landing_page_1',
-                        promo_code:  paramsToEncode.promo_code,
-                        marketplace: paramsToEncode.marketplace,
-                        bu:          paramsToEncode.bu,
-                    });
+                        console.log('🔐 Encoded Params:', encoded);
 
-                    console.log('✅ enter_to_win_clicked event logged');
+                        if(paramsToEncode.userId){
+                            // Log button click event
+                        braze.logCustomEvent('myproperty_clicked_entered_to_win', {});
 
-                    // Redirect to page 2
-                    // const redirectUrl =
-                    //     'https://danish-pg.github.io/landing_page_2/index.html?params='
-                    //     + encoded;
-                    const redirectUrl = 'propertygurusg://https://www.propertyguru.com.sg/home-sellers?utm_source=lcm_braze&utm_medium=in_push&utm_campaign=sg_consumers_myproperty_onboarding_iam';
+                        }
 
-                    console.log('🔗 Redirecting to:', redirectUrl);
+                        
 
-                    window.open(redirectUrl, '_self');
-                  //  window.location.assign(redirectUrl);
-                  //  window.location.href = redirectUrl;
+                        console.log('✅ enter_to_win_clicked event logged');
+
+                        // Redirect to page 2
+                        const redirectUrl =
+                            'https://danish-pg.github.io/landing_page_2/index.html?params='
+                            + encoded;
+
+                        console.log('🔗 Redirecting to (onboarded):', redirectUrl);
+                        window.open(redirectUrl, '_self');
+                    }
 
                 } catch (error) {
                     console.error('❌ Error on button click:', error);
